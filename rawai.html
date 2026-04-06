@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Raw AI Images — Isabel Fraga</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --cream:#F5F5F5;--white:#FFFFFF;--ink:#1A1714;--ink-soft:#4A4540;
+  --ink-muted:#9A948E;--accent:#315CC0;--accent-light:#C8D8ED;--line:#E2DBD4;
+}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);font-size:16px;line-height:1.6;cursor:none;}
+@media(hover:none){body{cursor:auto;}.cursor,.cursor-ring{display:none;}}
+
+.cursor{position:fixed;width:10px;height:10px;background:var(--accent);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .3s,height .3s;}
+.cursor-ring{position:fixed;width:36px;height:36px;border:1.5px solid var(--accent);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);opacity:.5;transition:width .3s,height .3s,opacity .3s;}
+.cursor.hover{width:18px;height:18px;}
+.cursor-ring.hover{width:52px;height:52px;opacity:.2;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:28px 60px;background:rgba(245,245,245,0.92);backdrop-filter:blur(12px);border-bottom:1px solid transparent;transition:border-color .3s;}
+nav.scrolled{border-bottom-color:var(--line);}
+.nav-links{display:flex;gap:48px;list-style:none;}
+.nav-links a{font-size:13px;font-weight:400;color:var(--ink-soft);text-decoration:none;letter-spacing:.04em;transition:color .2s;position:relative;}
+.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--accent);transition:width .3s;}
+.nav-links a:hover{color:var(--ink);}
+.nav-links a:hover::after{width:100%;}
+
+/* HERO */
+.case-hero{padding:140px 80px 80px;max-width:1200px;margin:0 auto;display:flex;flex-direction:column;align-items:center;text-align:center;}
+.case-tag{font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:20px;opacity:0;animation:fadeUp .7s ease .1s forwards;}
+.case-title{font-family:'Unbounded',sans-serif;font-size:clamp(36px,5vw,72px);font-weight:500;letter-spacing:-.03em;line-height:1.05;color:var(--ink);margin-bottom:24px;opacity:0;animation:fadeUp .7s ease .2s forwards;}
+.case-subtitle{font-size:clamp(15px,1.5vw,18px);color:var(--ink-soft);font-weight:300;max-width:660px;line-height:1.8;margin-bottom:60px;opacity:0;animation:fadeUp .7s ease .3s forwards;}
+.case-meta{display:flex;gap:60px;justify-content:center;flex-wrap:wrap;padding:32px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);width:100%;opacity:0;animation:fadeUp .7s ease .4s forwards;}
+.meta-label{font-size:10px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:6px;}
+.meta-value{font-size:14px;font-weight:400;color:var(--ink-soft);}
+
+/* HERO IMAGE */
+.hero-img-wrap{width:100%;max-width:1200px;margin:60px auto 0;padding:0 80px;opacity:0;animation:fadeUp .8s ease .5s forwards;}
+.hero-img-wrap img{width:100%;border-radius:12px;display:block;box-shadow:0 24px 80px rgba(0,0,0,.15);}
+.hero-img-wrap .img-placeholder{width:100%;aspect-ratio:16/7;border-radius:12px;background:linear-gradient(135deg,#4a8fd4 0%,#2c6ab0 100%);display:flex;align-items:center;justify-content:center;font-family:'Unbounded',sans-serif;font-size:28px;font-weight:500;letter-spacing:-.02em;color:#fff;}
+
+/* CONTENT */
+.case-content{max-width:1200px;margin:0 auto;padding:0 80px;}
+
+/* SECTIONS */
+.case-section{padding:80px 0 0;opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease;}
+.case-section.visible{opacity:1;transform:none;}
+.section-label{font-size:10px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:16px;display:flex;align-items:center;gap:12px;}
+.section-label::after{content:'';flex:1;height:1px;background:var(--accent);opacity:.25;}
+.section-heading{font-family:'Unbounded',sans-serif;font-size:clamp(22px,3vw,38px);font-weight:500;letter-spacing:-.02em;color:var(--ink);margin-bottom:24px;line-height:1.15;}
+.section-body{font-size:15px;color:var(--ink-soft);line-height:1.85;font-weight:300;max-width:760px;}
+.sub-heading{font-family:'Unbounded',sans-serif;font-size:16px;font-weight:500;color:var(--ink);margin:52px 0 16px;letter-spacing:-.01em;}
+
+/* IMAGES */
+.case-img{width:100%;margin:40px 0;border-radius:10px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.08);}
+.case-img img{width:100%;display:block;}
+.case-img .img-ph{width:100%;background:var(--accent-light);display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:13px;letter-spacing:.06em;text-transform:uppercase;font-weight:500;}
+.case-img .img-ph.tall{aspect-ratio:16/9;}
+.case-img .img-ph.short{aspect-ratio:21/9;}
+
+/* THREE CARDS */
+.three-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;margin:36px 0;}
+.info-card{background:var(--white);border:1px solid var(--line);border-radius:10px;padding:28px;}
+.info-card-label{font-size:10px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;}
+.info-card-text{font-size:14px;color:var(--ink-soft);line-height:1.75;font-weight:300;}
+
+/* TWO COLS */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin:36px 0;}
+
+/* DECISION CARDS */
+.decision-card{background:var(--white);border:1px solid var(--line);border-radius:10px;padding:28px;}
+.decision-card-title{font-family:'Unbounded',sans-serif;font-size:13px;font-weight:500;color:var(--ink);margin-bottom:10px;letter-spacing:-.01em;}
+.decision-card-text{font-size:14px;color:var(--ink-soft);line-height:1.75;font-weight:300;}
+
+/* MVP LIST */
+.mvp-list{list-style:none;display:flex;flex-direction:column;gap:12px;margin:24px 0;}
+.mvp-list li{display:flex;align-items:center;gap:14px;font-size:15px;color:var(--ink-soft);font-weight:300;line-height:1.6;}
+.mvp-list li::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0;}
+
+/* USER LIST */
+.user-list{list-style:none;display:flex;flex-direction:column;gap:16px;margin:24px 0;}
+.user-list li{display:flex;flex-direction:row;align-items:flex-start;gap:16px;}
+.user-dot{min-width:28px;width:28px;height:28px;border-radius:50%;background:var(--accent);color:white;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;align-self:flex-start;}
+.user-text{font-size:15px;color:var(--ink-soft);font-weight:300;line-height:1.7;}
+/* PERSONA CARDS */
+.persona-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin:32px 0;}
+.persona-card{background:var(--white);border:1px solid var(--line);border-radius:12px;padding:32px;}
+.persona-img{width:72px;height:72px;border-radius:50%;overflow:hidden;margin-bottom:20px;background:var(--accent-light);}
+.persona-img img{width:100%;height:100%;object-fit:cover;display:block;}
+.persona-img .img-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:24px;}
+.persona-card-name{font-family:'Unbounded',sans-serif;font-size:16px;font-weight:500;color:var(--ink);margin-bottom:4px;letter-spacing:-.01em;}
+.persona-card-role{font-size:11px;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-bottom:16px;}
+.persona-card-desc{font-size:14px;color:var(--ink-soft);font-weight:300;line-height:1.75;}
+
+/* DIFFERENTIATION BLOCK */
+.diff-block{background:var(--white);border:1px solid var(--line);border-radius:10px;padding:36px;margin:32px 0;}
+.diff-block p{font-size:15px;color:var(--ink-soft);line-height:1.85;font-weight:300;}
+.diff-block p+p{margin-top:16px;}
+.diff-highlight{color:var(--ink);font-weight:500;}
+
+/* PROTOTYPE LINK */
+.prototype-link{display:inline-flex;align-items:center;padding:14px 28px;background:var(--accent);color:#fff;text-decoration:none;border-radius:100px;font-size:13px;font-weight:500;letter-spacing:.04em;transition:opacity .2s;}
+.prototype-link:hover{opacity:.8;}
+
+/* PREV NEXT */
+.case-nav{display:flex;justify-content:space-between;align-items:center;padding:60px 80px;max-width:1200px;margin:80px auto 0;border-top:1px solid var(--line);}
+.case-nav-link{text-decoration:none;display:flex;flex-direction:column;gap:6px;transition:opacity .2s;}
+.case-nav-link:hover{opacity:.6;}
+.case-nav-dir{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-muted);}
+.case-nav-name{font-family:'Unbounded',sans-serif;font-size:16px;font-weight:500;color:var(--ink);letter-spacing:-.02em;}
+.case-nav-link.next{text-align:right;}
+
+/* FOOTER */
+footer{border-top:1px solid var(--line);padding:28px 60px;margin-top:60px;display:flex;align-items:center;justify-content:center;}
+.footer-links{display:flex;gap:40px;list-style:none;}
+.footer-links a{font-size:12px;color:var(--ink-muted);text-decoration:none;letter-spacing:.04em;transition:color .2s;}
+.footer-links a:hover{color:var(--accent);}
+
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease;}
+.reveal.visible{opacity:1;transform:none;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+
+@media(max-width:768px){
+  nav{padding:20px 24px;}
+  .nav-links{gap:20px;}
+  .case-hero,.hero-img-wrap,.case-content{padding-left:24px;padding-right:24px;}
+  .case-meta{gap:28px;}
+  .three-grid,.two-col{grid-template-columns:1fr;}
+  .case-nav{padding:40px 24px;flex-direction:column;gap:32px;text-align:center;}
+  .case-nav-link.next{text-align:center;}
+}
+
+
+</style>
+</head>
+<body>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<nav id="nav">
+  <ul class="nav-links">
+    <li><a href="index.html">Work</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="index.html#contact">Contact</a></li>
+    <li><a href="/isabel-fraga-cv.pdf" download>Resume</a></li>
+  </ul>
+</nav>
+
+<div class="case-hero">
+  <p class="case-tag">Website · AI</p>
+  <h1 class="case-title">Raw AI Images</h1>
+  <p class="case-subtitle">A stock image platform that turns unused AI-generated visuals into valuable resources — made for creators, designers, and AI enthusiasts.</p>
+  <div class="case-meta">
+    <div class="meta-item"><div class="meta-label">Role</div><div class="meta-value">UX/UI Designer</div></div>
+    <div class="meta-item"><div class="meta-label">Type</div><div class="meta-value">Website · AI</div></div>
+    <div class="meta-item"><div class="meta-label">Tools</div><div class="meta-value">Figma</div></div>
+    <div class="meta-item"><div class="meta-label">Year</div><div class="meta-value">2025</div></div>
+  </div>
+</div>
+
+<div class="hero-img-wrap">
+  <img src="raw-image1.jpg" alt="Raw AI Images hero" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+  <div class="img-placeholder" style="display:none;">Raw AI Images</div>
+</div>
+
+<div class="case-content">
+
+  <!-- OVERVIEW -->
+  <div class="case-section reveal">
+    <p class="section-label">Overview</p>
+    <p class="section-body">Raw AI Images is a stock image platform focused on AI-generated visuals. Unlike traditional stock platforms, it creates a dedicated space for creators to upload AI images — allowing others to discover, refine, and reuse them.</p>
+     <!--<div class="case-img" style="margin-top:40px;">
+       <img src="raw-image2.jpg" alt="Platform overview" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+      <div class="img-ph tall" style="display:none;">Overview — raw-image2.jpg</div>
+    </div>
+  </div> -->
+
+  <!-- DISCOVER -->
+  <div class="case-section reveal">
+    <p class="section-label">Discover</p>
+    <h2 class="section-heading">Problem & Objective</h2>
+
+    <div class="two-col">
+      <div class="info-card">
+        <div class="info-card-label">Problem</div>
+        <p class="info-card-text">With the rapid growth of generative AI, creators produce large volumes of images — but many are discarded due to minor imperfections. There is currently no platform designed to reuse, refine, or collaborate on these unfinished assets.</p>
+      </div>
+      <div class="info-card">
+        <div class="info-card-label">Objective</div>
+        <p class="info-card-text">Design a platform that transforms unused AI-generated images into valuable resources by enabling discovery, reuse, and collaborative improvement.</p>
+      </div>
+    </div>
+
+    <p class="sub-heading">Target Users</p>
+    <div class="persona-grid">
+      <div class="persona-card">
+        <div class="persona-img">
+          <img src="Avatar4.jpg" alt="Persona 1" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+          <div class="img-ph" style="display:none;">👤</div>
+        </div>
+        <div class="persona-card-name">The Uploader</div>
+        <div class="persona-card-role">AI Image Generator</div>
+        <p class="persona-card-desc">Generates AI images and wants to share or repurpose unused outputs. Needs an easy way to upload and monetise their work.</p>
+      </div>
+      <div class="persona-card">
+        <div class="persona-img">
+          <img src="Avatar5.jpg" alt="Persona 2" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+          <div class="img-ph" style="display:none;">👤</div>
+        </div>
+        <div class="persona-card-name">The Downloader</div>
+        <div class="persona-card-role">Designer & Marketer</div>
+        <p class="persona-card-desc">Looking for diverse and unique visuals that go beyond traditional stock imagery. Needs quick access to ready-to-use images for their projects.</p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- DEFINE -->
+  <div class="case-section reveal">
+    <p class="section-label">Define</p>
+    <h2 class="section-heading">Solution & Product Decisions</h2>
+    <p class="section-body">Raw AI Images provides a platform where users can upload, browse, and refine AI-generated images. By combining advanced search, basic editing tools, and community-driven feedback, the platform enables AI images to gain new value.</p>
+
+    <p class="sub-heading">Key Product Decisions</p>
+    <div class="three-grid">
+      <div class="decision-card">
+        <div class="decision-card-title">Search-first experience</div>
+        <p class="decision-card-text">The platform prioritizes search as the main interaction, allowing users to quickly find relevant images through filters and AI-powered tagging.</p>
+      </div>
+      <div class="decision-card">
+        <div class="decision-card-title">Built-in editing tools</div>
+        <p class="decision-card-text">Basic editing features were included to allow users to refine images without leaving the platform, reducing friction in the workflow.</p>
+      </div>
+      <div class="decision-card">
+        <div class="decision-card-title">Community-driven system</div>
+        <p class="decision-card-text">Ratings and feedback were introduced to encourage collaboration and continuous improvement of images across the platform.</p>
+      </div>
+    </div>
+
+    <p class="sub-heading">MVP Scope</p>
+    <p class="section-body">To focus on core value, the MVP includes:</p>
+    <ul class="mvp-list">
+      <li>Image upload and management</li>
+      <li>Advanced search and filtering</li>
+      <li>Image download</li>
+      <li>Basic editing tools</li>
+      <li>Rating and feedback system</li>
+    </ul>
+
+    <p class="sub-heading">Differentiation</p>
+    <div class="diff-block">
+      <p>Unlike platforms such as <span class="diff-highlight">Unsplash</span> or <span class="diff-highlight">Shutterstock</span>, which focus on polished final images, Raw AI Images centers around raw, imperfect AI-generated content.</p>
+      <p>The platform introduces collaboration and refinement as core features, positioning unfinished assets as <span class="diff-highlight">opportunities rather than waste</span>.</p>
+    </div>
+  </div>
+
+  <!-- DESIGN -->
+  <div class="case-section reveal">
+    <p class="section-label">Design</p>
+    <h2 class="section-heading">Final Design</h2>
+    <p class="section-body">The final design focuses on clarity and usability, with a clean interface that prioritizes search, image discovery, and quick interaction. A minimal visual style was chosen to keep the focus on the content while ensuring an intuitive user experience.</p>
+
+    <p class="sub-heading">Desktop</p>
+    <div class="case-img">
+      <img src="raw-web.jpg" alt="Desktop design" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+      <div class="img-ph tall" style="display:none;">Desktop — raw-web.jpg</div>
+    </div>
+    <div style="text-align:center;margin:16px 0 48px;">
+      <a href="#" class="prototype-link" target="_blank">View Desktop</a>
+    </div>
+
+    <p class="sub-heading">Mobile</p>
+    <div class="case-img">
+      <img src="raw-mobile.jpg" alt="Mobile design" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+      <div class="img-ph tall" style="display:none;">Mobile — raw-mobile.jpg</div>
+    </div>
+    <div style="text-align:center;margin:16px 0 48px;">
+      <a href="#" class="prototype-link" target="_blank">View Mobile</a>
+    </div>
+  </div>
+
+  <!-- CONCLUSION -->
+  <div class="case-section reveal">
+    <p class="section-label">Conclusion</p>
+    <h2 class="section-heading">Key Takeaways</h2>
+    <ul class="mvp-list">
+      <li>Designing for both creators and consumers required balancing different needs throughout the process.</li>
+      <li>Structured upload flows are essential to guide users without overwhelming them.</li>
+      <li>Prioritizing search and simplicity was key to improving overall usability.</li>
+    </ul>
+  </div>
+
+</div>
+
+<div class="case-nav">
+  <a href="aptivio.html" class="case-nav-link prev">
+    <span class="case-nav-dir">← Previous</span>
+    <span class="case-nav-name">Aptivio</span>
+  </a>
+  <a href="deporteslaser.html" class="case-nav-link next">
+    <span class="case-nav-dir">Next →</span>
+    <span class="case-nav-name">Deportes Laser</span>
+  </a>
+</div>
+
+<footer>
+  <ul class="footer-links">
+    <li><a href="index.html">Work</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="index.html#contact">Contact</a></li>
+    <li><a href="/isabel-fraga-cv.pdf" download>Resume</a></li>
+  </ul>
+</footer>
+
+<script>
+const cursor=document.getElementById('cursor'),ring=document.getElementById('cursorRing');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cursor.style.left=mx+'px';cursor.style.top=my+'px';});
+function animRing(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(animRing);}
+animRing();
+document.querySelectorAll('a').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cursor.classList.add('hover');ring.classList.add('hover');});
+  el.addEventListener('mouseleave',()=>{cursor.classList.remove('hover');ring.classList.remove('hover');});
+});
+window.addEventListener('scroll',()=>document.getElementById('nav').classList.toggle('scrolled',window.scrollY>40));
+const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:.1});
+document.querySelectorAll('.reveal,.case-section').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>
