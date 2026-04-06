@@ -77,15 +77,20 @@ nav.scrolled{border-bottom-color:var(--line);}
   width:100%;max-width:1200px;margin:60px auto 0;padding:0 80px;
   opacity:0;animation:fadeUp .8s ease .5s forwards;
 }
-.hero-img-wrap img{
-  width:100%;border-radius:12px;display:block;
-  box-shadow:0 24px 80px rgba(0,0,0,.1);
-}
-.hero-img-wrap .img-placeholder{
-  width:100%;aspect-ratio:16/9;border-radius:12px;
+.hero-img-box{
+  width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;
   background:linear-gradient(135deg,#c9a97a,#a07850);
+  position:relative;
+  box-shadow:0 24px 80px rgba(0,0,0,.1);
   display:flex;align-items:center;justify-content:center;
+}
+.hero-img-box img{
+  position:absolute;top:0;left:0;
+  width:100%;height:100%;object-fit:cover;display:block;
+}
+.hero-img-box .img-label{
   color:white;font-family:'Unbounded',sans-serif;font-size:28px;font-weight:500;letter-spacing:-.02em;
+  position:relative;z-index:1;
 }
 
 /* CONTENT */
@@ -270,8 +275,10 @@ footer{
 
 <!-- HERO IMAGE -->
 <div class="hero-img-wrap">
-  <img src="falendi.jpg" alt="Falendi platform" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-  <div class="img-placeholder">Falendi</div>
+  <div class="hero-img-box">
+    <img src="falendi.jpg" alt="Falendi platform">
+    <span class="img-label">Falendi</span>
+  </div>
 </div>
 
 <!-- CONTENT -->
@@ -337,6 +344,18 @@ footer{
 </footer>
 
 <script>
+const heroImg = document.querySelector('.hero-img-box img');
+if(heroImg){
+  heroImg.addEventListener('load',()=>{
+    const label=heroImg.nextElementSibling;
+    if(label) label.style.display='none';
+  });
+  heroImg.addEventListener('error',()=>heroImg.style.display='none');
+  if(heroImg.complete && heroImg.naturalWidth){
+    const label=heroImg.nextElementSibling;
+    if(label) label.style.display='none';
+  }
+}
 const cursor=document.getElementById('cursor'),ring=document.getElementById('cursorRing');
 let mx=0,my=0,rx=0,ry=0;
 document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cursor.style.left=mx+'px';cursor.style.top=my+'px';});
